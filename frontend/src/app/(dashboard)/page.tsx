@@ -1,3 +1,5 @@
+import { SystemHealthBadge } from "@/components/feedback/system-health-badge";
+
 export default function DashboardOverviewPage() {
   return (
     <section className="space-y-4">
@@ -9,6 +11,7 @@ export default function DashboardOverviewPage() {
           SER Dewatering &amp; Construction Equipment real-time inventory overview (scaffold placeholder).
         </p>
       </header>
+      <SystemHealthBadge />
     </section>
   );
 }

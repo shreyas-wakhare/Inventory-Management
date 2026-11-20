@@ -40,6 +40,7 @@ frontend/build/
 frontend/.turbo/
 frontend/coverage/
 frontend/next-env.d.ts
+*.tsbuildinfo
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*

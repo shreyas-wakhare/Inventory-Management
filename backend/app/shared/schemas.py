@@ -13,6 +13,7 @@ class HealthResponse(BaseModel):
     status: str
     service: str
     environment: str
+    database: str
 
 
 class APIResponse(BaseModel, Generic[T]):

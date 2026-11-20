@@ -8,16 +8,17 @@ from app.core.config import settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging
 from app.shared.schemas import HealthResponse
+from database.session import check_db_connection
 
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application instance."""
-    configure_logging(debug=settings.DEBUG)
+    configure_logging(debug=settings.APP_DEBUG)
 
     application = FastAPI(
         title=settings.APP_NAME,
         version="0.1.0",
-        debug=settings.DEBUG,
+        debug=settings.APP_DEBUG,
         docs_url="/docs",
         redoc_url="/redoc",
         openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
@@ -35,7 +36,13 @@ def create_app() -> FastAPI:
 
     @application.get("/health", response_model=HealthResponse, tags=["health"])
     def health_check() -> HealthResponse:
-        return HealthResponse(status="ok", service=settings.APP_NAME, environment=settings.APP_ENV)
+        db_status = "connected" if check_db_connection() else "disconnected"
+        return HealthResponse(
+            status="ok" if db_status == "connected" else "degraded",
+            service=settings.APP_NAME,
+            environment=settings.APP_ENV,
+            database=db_status,
+        )
 
     application.include_router(api_v1_router, prefix=settings.API_V1_PREFIX)
     return application

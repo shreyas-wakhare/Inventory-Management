@@ -16,9 +16,9 @@ class Settings(BaseSettings):
 
     APP_NAME: str = "SER Inventory Management System API"
     APP_ENV: str = "development"
-    DEBUG: bool = True
+    APP_DEBUG: bool = True
     API_V1_PREFIX: str = "/api/v1"
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
     # PostgreSQL
     DATABASE_URL: str = (
