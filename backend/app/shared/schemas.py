@@ -1,8 +1,12 @@
-"""Shared Pydantic v2 response envelopes and common DTOs."""
+"""Shared Pydantic v2 response envelopes and pagination helpers (SDD-2 Section 4.1)."""
 
-from typing import Generic, TypeVar
+from __future__ import annotations
 
-from pydantic import BaseModel
+import math
+from datetime import UTC, datetime
+from typing import Any, Generic, TypeVar
+
+from pydantic import BaseModel, Field
 
 T = TypeVar("T")
 
@@ -29,6 +33,18 @@ class PaginationMeta(BaseModel):
     page: int
     page_size: int
     total: int
+    total_pages: int
+
+
+def build_pagination_meta(*, page: int, page_size: int, total: int) -> PaginationMeta:
+    """Compute standardized pagination metadata."""
+    total_pages = math.ceil(total / page_size) if total > 0 else 0
+    return PaginationMeta(
+        page=page,
+        page_size=page_size,
+        total=total,
+        total_pages=total_pages,
+    )
 
 
 class PaginatedResponse(BaseModel, Generic[T]):
@@ -37,3 +53,10 @@ class PaginatedResponse(BaseModel, Generic[T]):
     items: list[T]
     meta: PaginationMeta
 
+
+class ChartSeriesResponse(BaseModel, Generic[T]):
+    """Standard pre-aggregated analytics/chart payload wrapper for Next.js."""
+
+    data: T
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    filters_applied: dict[str, Any] = Field(default_factory=dict)

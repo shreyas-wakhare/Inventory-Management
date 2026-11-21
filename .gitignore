@@ -50,6 +50,11 @@ pnpm-debug.log*
 *.dump
 backend/database/pgdata/
 
+# Local Seed Data (Confidential Excel / CSV imports)
+backend/database/seeds/data/*
+!backend/database/seeds/data/.gitkeep
+!backend/database/seeds/data/README.md
+
 # Logs
 *.log
 logs/

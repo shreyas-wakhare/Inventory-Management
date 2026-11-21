@@ -39,5 +39,12 @@ alembic -c database/alembic.ini revision --autogenerate -m "describe_change"
 
 # Start API server
 uvicorn app.main:app --reload --port 8000
+
+# Import Material List catalog (idempotent)
+.\.venv\Scripts\python.exe -m database.seeds.import_material_list
+
+# Reset SER org back to clean seeded baseline after manual Swagger/demo testing (dev only)
+.\.venv\Scripts\python.exe database/seeds/reset_to_baseline.py --dry-run
+.\.venv\Scripts\python.exe database/seeds/reset_to_baseline.py --yes
 ```
 

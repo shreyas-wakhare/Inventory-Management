@@ -1,27 +1,50 @@
-"""FastAPI router definitions and dependency wiring for the stock_movements domain."""
+"""FastAPI router definitions for /stock-movements audit ledger endpoints."""
 
-from fastapi import APIRouter, Depends
+from __future__ import annotations
 
-from app.core.dependencies import DbSession
+from datetime import date
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, Query
+
+from app.core.dependencies import CurrentUserDep, DbSession, PaginationDep
 from app.modules.stock_movements.controller import StockMovementController
 from app.modules.stock_movements.repository import StockMovementRepository
-from app.modules.stock_movements.schemas import StockMovementModuleStatus
+from app.modules.stock_movements.schemas import StockMovementResponse
 from app.modules.stock_movements.service import StockMovementService
-from app.shared.schemas import APIResponse
+from app.shared.enums import MovementType, OwnershipSource
+from app.shared.schemas import PaginatedResponse
 
 router = APIRouter(prefix="/stock-movements", tags=["stock-movements"])
 
 
 def get_controller(db: DbSession) -> StockMovementController:
-    """Wire repository -> service -> controller for request scope."""
-    repository = StockMovementRepository(db)
-    service = StockMovementService(repository)
-    return StockMovementController(service)
+    return StockMovementController(StockMovementService(StockMovementRepository(db)))
 
 
-@router.get("/status", response_model=APIResponse[StockMovementModuleStatus])
-def module_status(
+@router.get("", response_model=PaginatedResponse[StockMovementResponse])
+def list_stock_movements(
+    pagination: PaginationDep,
+    current_user: CurrentUserDep,
+    item_id: UUID | None = Query(default=None),
+    equipment_unit_id: UUID | None = Query(default=None),
+    project_id: UUID | None = Query(default=None),
+    ownership_source: OwnershipSource | None = Query(default=None),
+    movement_type: MovementType | None = Query(default=None),
+    reference_number: str | None = Query(default=None),
+    date_from: date | None = Query(default=None),
+    date_to: date | None = Query(default=None),
     controller: StockMovementController = Depends(get_controller),
-) -> APIResponse[StockMovementModuleStatus]:
-    """Scaffold endpoint verifying stock_movements router -> controller -> service -> repository wiring."""
-    return controller.get_status()
+) -> PaginatedResponse[StockMovementResponse]:
+    return controller.list_movements(
+        current_user,
+        pagination,
+        item_id=item_id,
+        equipment_unit_id=equipment_unit_id,
+        project_id=project_id,
+        ownership_source=ownership_source,
+        movement_type=movement_type,
+        reference_number=reference_number,
+        date_from=date_from,
+        date_to=date_to,
+    )

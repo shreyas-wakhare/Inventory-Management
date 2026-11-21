@@ -1,6 +1,8 @@
 """FastAPI application entrypoint and factory."""
 
-from fastapi import FastAPI
+import uuid
+
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_v1_router
@@ -17,7 +19,7 @@ def create_app() -> FastAPI:
 
     application = FastAPI(
         title=settings.APP_NAME,
-        version="0.1.0",
+        version="1.0.0",
         debug=settings.APP_DEBUG,
         docs_url="/docs",
         redoc_url="/redoc",
@@ -31,6 +33,14 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @application.middleware("http")
+    async def attach_trace_id(request: Request, call_next) -> Response:
+        trace_id = request.headers.get("X-Trace-Id") or f"req_{uuid.uuid4().hex[:12]}"
+        request.state.trace_id = trace_id
+        response = await call_next(request)
+        response.headers["X-Trace-Id"] = trace_id
+        return response
 
     register_exception_handlers(application)
 
@@ -49,4 +59,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-

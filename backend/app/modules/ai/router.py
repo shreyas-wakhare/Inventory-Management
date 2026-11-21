@@ -1,8 +1,8 @@
-"""FastAPI router definitions and dependency wiring for the ai domain."""
+"""FastAPI router definitions for the isolated /ai boundary."""
 
 from fastapi import APIRouter, Depends
 
-from app.core.dependencies import DbSession
+from app.core.dependencies import CurrentUserDep, DbSession
 from app.modules.ai.controller import AIController
 from app.modules.ai.repository import AIRepository
 from app.modules.ai.schemas import AIModuleStatus
@@ -13,15 +13,12 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 
 
 def get_controller(db: DbSession) -> AIController:
-    """Wire repository -> service -> controller for request scope."""
-    repository = AIRepository(db)
-    service = AIService(repository)
-    return AIController(service)
+    return AIController(AIService(AIRepository(db)))
 
 
 @router.get("/status", response_model=APIResponse[AIModuleStatus])
 def module_status(
+    _: CurrentUserDep,
     controller: AIController = Depends(get_controller),
 ) -> APIResponse[AIModuleStatus]:
-    """Scaffold endpoint verifying ai router -> controller -> service -> repository wiring."""
     return controller.get_status()

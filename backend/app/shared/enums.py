@@ -1,13 +1,98 @@
-"""Shared domain enumerations (placeholder for SDD-2)."""
+"""Canonical domain enumerations mirroring locked SDD-1 CHECK constraints."""
 
 from enum import StrEnum
 
 
 class UserRole(StrEnum):
-    """Baseline SER RBAC roles (to be finalized in SDD-1/SDD-2)."""
+    ADMIN = "ADMIN"
+    SER_OPERATOR = "SER_OPERATOR"
+    WORKSHOP_LEAD = "WORKSHOP_LEAD"
+    PROJECT_VIEWER = "PROJECT_VIEWER"
 
-    ADMIN = "admin"
-    STOREKEEPER = "storekeeper"
-    SITE_ENGINEER = "site_engineer"
-    AUDITOR = "auditor"
 
+class ProjectStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    COMPLETED = "COMPLETED"
+    CLOSED = "CLOSED"
+
+
+class ProductType(StrEnum):
+    ASSET = "ASSET"
+    ACCESSORY = "ACCESSORY"
+
+
+class EquipmentUnitStatus(StrEnum):
+    AVAILABLE = "AVAILABLE"
+    IN_USE = "IN_USE"
+    REPLENISHMENT = "REPLENISHMENT"
+    DAMAGED = "DAMAGED"
+    RETIRED = "RETIRED"
+
+
+class ConditionStatus(StrEnum):
+    GOOD = "GOOD"
+    NEEDS_SERVICE = "NEEDS_SERVICE"
+    DAMAGED = "DAMAGED"
+
+
+class OwnershipSource(StrEnum):
+    SER = "SER"
+    SUPPLIER = "SUPPLIER"
+    DWT = "DWT"
+
+
+class DeliveryOrderStatus(StrEnum):
+    DRAFT = "DRAFT"
+    DISPATCHED = "DISPATCHED"
+    PARTIALLY_RETURNED = "PARTIALLY_RETURNED"
+    CLOSED = "CLOSED"
+    CANCELLED = "CANCELLED"
+
+
+class CollectionOrderStatus(StrEnum):
+    DRAFT = "DRAFT"
+    RECEIVED = "RECEIVED"
+    CANCELLED = "CANCELLED"
+
+
+class PostReturnBucket(StrEnum):
+    AVAILABLE = "AVAILABLE"
+    REPLENISHMENT = "REPLENISHMENT"
+    DAMAGED = "DAMAGED"
+
+
+class StockBucket(StrEnum):
+    AVAILABLE = "AVAILABLE"
+    IN_USE = "IN_USE"
+    REPLENISHMENT = "REPLENISHMENT"
+    DAMAGED = "DAMAGED"
+    RETIRED = "RETIRED"
+    LOST = "LOST"
+    EXTERNAL = "EXTERNAL"
+
+
+class MovementType(StrEnum):
+    OPENING_STOCK = "OPENING_STOCK"
+    DO_DISPATCH = "DO_DISPATCH"
+    CO_RETURN_AVAILABLE = "CO_RETURN_AVAILABLE"
+    CO_RETURN_REPLENISHMENT = "CO_RETURN_REPLENISHMENT"
+    CO_RETURN_DAMAGED = "CO_RETURN_DAMAGED"
+    REPLENISHMENT_COMPLETE = "REPLENISHMENT_COMPLETE"
+    LOSS_WRITE_OFF = "LOSS_WRITE_OFF"
+    MANUAL_ADJUSTMENT = "MANUAL_ADJUSTMENT"
+
+
+class ReferenceType(StrEnum):
+    DELIVERY_ORDER = "DELIVERY_ORDER"
+    COLLECTION_ORDER = "COLLECTION_ORDER"
+    WORKSHOP_TICKET = "WORKSHOP_TICKET"
+    RECONCILIATION = "RECONCILIATION"
+    OPENING_BALANCE = "OPENING_BALANCE"
+    ADJUSTMENT = "ADJUSTMENT"
+
+
+class ReconciliationStatus(StrEnum):
+    OPEN = "OPEN"
+    EQUALIZED = "EQUALIZED"
+    DISCREPANCY = "DISCREPANCY"
+    RESOLVED = "RESOLVED"

@@ -3,7 +3,8 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, MetaData, func
+from sqlalchemy import DateTime, MetaData, func, text
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 # Consistent constraint naming convention for clean, deterministic Alembic migrations.
@@ -23,13 +24,18 @@ class Base(DeclarativeBase):
 
 
 class UUIDPrimaryKeyMixin:
-    """Provides a UUID primary key column."""
+    """Provides a PostgreSQL UUID primary key with gen_random_uuid() server default."""
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+        server_default=text("gen_random_uuid()"),
+    )
 
 
 class TimestampMixin:
-    """Provides audit timestamps managed by the database."""
+    """Provides audit created_at and updated_at timestamps managed in UTC."""
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -42,4 +48,3 @@ class TimestampMixin:
         onupdate=func.now(),
         nullable=False,
     )
-

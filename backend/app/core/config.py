@@ -25,12 +25,19 @@ class Settings(BaseSettings):
         "postgresql+psycopg://ser_admin:change-me-in-local-dev@localhost:5432/ser_inventory"
     )
     DB_ECHO: bool = False
+    DB_POOL_SIZE: int = 10
+    DB_MAX_OVERFLOW: int = 20
+    DB_POOL_RECYCLE: int = 1800
 
     # Security / JWT
     JWT_SECRET_KEY: str = "change-me-in-production"
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    # Local dev / Swagger bootstrap auth (effective ONLY when APP_ENV == "development")
+    DEV_AUTH_BYPASS: bool = True
+    DEV_DEFAULT_USER_EMAIL: str = "system.import@ser.local"
 
     # Future AI Module (isolated and disabled by default)
     AI_ENABLED: bool = False
@@ -45,4 +52,3 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
-

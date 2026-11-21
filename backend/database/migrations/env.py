@@ -5,13 +5,9 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+import database.models  # noqa: F401 - register all 12 ORM models on Base.metadata
 from app.core.config import settings
 from database.base import Base
-
-# Import domain model modules here as ORM models are implemented in SDD-2
-# so Alembic autogenerate discovers all tables on Base.metadata.
-# Example:
-# from app.modules.users import models as users_models  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
@@ -60,4 +56,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-
